@@ -462,10 +462,10 @@ PreparedStatement pst;
     public void validateFeild(JTextField field,JLabel label, String name){
         if(field.getText().length()!=10){
             label.setText("Invalid "+ name);
-            Create.setVisible(false);
+            //Create.setVisible(false);
         }else {
             label.setText("");
-            Create.setVisible(true);
+            //Create.setVisible(true);
         }
     } 
     private static final char[] escapeChars = { '<', '(', '[', '{', '\\', '^', '-', '=', '$', '!', '|', ']', '}', ')', '?', '*', '+', '.', '>' };
@@ -511,7 +511,7 @@ PreparedStatement pst;
             
          }*/
             
-        String sql = "insert into Account(Acc,Name,DOB,Pin,Acc_Type,Ethnicity,MICR_No,Gender,Mob,Address,Sec_Q,Sec_A,Balance) values(?,?,?,?,?,?,?,?,?,?,?,?,?)";
+        /*String sql = "insert into Account(Acc,Name,DOB,Pin,Acc_Type,Ethnicity,MICR_No,Gender,Mob,Address,Sec_Q,Sec_A,Balance) values(?,?,?,?,?,?,?,?,?,?,?,?,?)";
         try{
             pst = conn.prepareStatement(sql);
             pst.setString(1, AccnumAP.getText());
@@ -531,6 +531,37 @@ PreparedStatement pst;
             pst.setString(11, Encypt.getMd5((String) SecurityqAP.getSelectedItem()));
             pst.setString(12, Encypt.getMd5(AnswerAP.getText()));
             pst.setString(13, Encypt.getMd5(AmountxtAP.getText()));
+            
+            
+                pst.execute();
+                JOptionPane.showMessageDialog(null, "Success! Account has been created");
+                Bal();
+                Acc2();
+           
+            
+        }catch(Exception e){
+            JOptionPane.showMessageDialog(null,e);
+        }*/
+        String sql = "insert into Account(Acc,Name,DOB,Pin,Acc_Type,Ethnicity,MICR_No,Gender,Mob,Address,Sec_Q,Sec_A,Balance) values(?,?,?,?,?,?,?,?,?,?,?,?,?)";
+        try{
+            pst = conn.prepareStatement(sql);
+            pst.setString(1, AccnumAP.getText());
+            pst.setString(2, AES.encrypt(FullnameAP.getText(),PinAP.getText()));
+            pst.setString(3, AES.encrypt(((JTextField)DateofbirthAP.getDateEditor().getUiComponent()).getText(),PinAP.getText()));
+            pst.setString(4, AES.encrypt(PinAP.getText(),PinAP.getText()));
+            pst.setString(5, AES.encrypt((String) AcctypeAP.getSelectedItem(),PinAP.getText()));
+            pst.setString(6, AES.encrypt((String) EthnicityAP.getSelectedItem(),PinAP.getText()));
+            pst.setString(7, AES.encrypt(MnumAP.getText(),PinAP.getText()));// 4942   823
+            
+            Male.setActionCommand("Male");
+            Female.setActionCommand("Female");
+            Other.setActionCommand("Other");
+            pst.setString(8, buttonGroup1.getSelection().getActionCommand());
+            pst.setString(9, AES.encrypt(MobileAP.getText(),PinAP.getText()));
+            pst.setString(10, AES.encrypt(AddressAP.getText(),PinAP.getText()));
+            pst.setString(11, AES.encrypt((String) SecurityqAP.getSelectedItem(),PinAP.getText()));
+            pst.setString(12, AES.encrypt(AnswerAP.getText(),PinAP.getText()));
+            pst.setString(13, AES.encrypt(AmountxtAP.getText(),PinAP.getText()));
             
             
                 pst.execute();
