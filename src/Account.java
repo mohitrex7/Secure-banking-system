@@ -8,6 +8,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JTextField;
 
@@ -81,6 +82,8 @@ PreparedStatement pst;
         AmounttxtAP = new javax.swing.JLabel();
         AmountxtAP = new javax.swing.JTextField();
         SecurityqAP = new javax.swing.JComboBox<>();
+        invalid_phone = new javax.swing.JLabel();
+        invalid_Address = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setBackground(new java.awt.Color(255, 255, 255));
@@ -118,6 +121,11 @@ PreparedStatement pst;
                 CreateActionPerformed(evt);
             }
         });
+        Create.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyReleased(java.awt.event.KeyEvent evt) {
+                CreateKeyReleased(evt);
+            }
+        });
 
         LogoAP.setIcon(new javax.swing.ImageIcon(getClass().getResource("/BankingImages/banking logo (2).png"))); // NOI18N
         LogoAP.setText("jLabel1");
@@ -150,6 +158,12 @@ PreparedStatement pst;
         EthnicitytxtAP.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N
         EthnicitytxtAP.setText("Ethnicity:");
 
+        MobileAP.addFocusListener(new java.awt.event.FocusAdapter() {
+            public void focusLost(java.awt.event.FocusEvent evt) {
+                MobileAPFocusLost(evt);
+            }
+        });
+
         MobiletxtAP.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N
         MobiletxtAP.setText("Mobile:");
 
@@ -159,6 +173,11 @@ PreparedStatement pst;
         GendertxtAP.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N
         GendertxtAP.setText("Gender:");
 
+        AddressAP.addFocusListener(new java.awt.event.FocusAdapter() {
+            public void focusLost(java.awt.event.FocusEvent evt) {
+                AddressAPFocusLost(evt);
+            }
+        });
         AddressAP.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 AddressAPActionPerformed(evt);
@@ -212,6 +231,12 @@ PreparedStatement pst;
         SecurityqAP.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N
         SecurityqAP.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "What is the name of your first pet?", "What is the name of your mother?", "What is the name of your favouite teacher?", "What is your nickname?" }));
 
+        invalid_phone.setFont(new java.awt.Font("Dialog", 1, 8)); // NOI18N
+        invalid_phone.setForeground(new java.awt.Color(255, 0, 0));
+
+        invalid_Address.setFont(new java.awt.Font("Dialog", 0, 8)); // NOI18N
+        invalid_Address.setForeground(new java.awt.Color(204, 0, 0));
+
         javax.swing.GroupLayout AccountPageLayout = new javax.swing.GroupLayout(AccountPage);
         AccountPage.setLayout(AccountPageLayout);
         AccountPageLayout.setHorizontalGroup(
@@ -248,9 +273,12 @@ PreparedStatement pst;
                             .addComponent(FullnameAP)
                             .addComponent(DateofbirthAP, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                             .addComponent(SecurityqAP, javax.swing.GroupLayout.PREFERRED_SIZE, 251, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(MobileAP)
-                            .addComponent(EthnicityAP, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                        .addGap(85, 85, 85))
+                            .addComponent(EthnicityAP, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(invalid_phone)))
+                    .addGroup(AccountPageLayout.createSequentialGroup()
+                        .addComponent(AcctypeAP, javax.swing.GroupLayout.PREFERRED_SIZE, 231, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(301, 301, 301)
+                        .addComponent(MobileAP))
                     .addGroup(AccountPageLayout.createSequentialGroup()
                         .addGroup(AccountPageLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addGroup(AccountPageLayout.createSequentialGroup()
@@ -263,11 +291,12 @@ PreparedStatement pst;
                             .addGroup(AccountPageLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                                 .addComponent(Back, javax.swing.GroupLayout.PREFERRED_SIZE, 79, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addComponent(AmountxtAP, javax.swing.GroupLayout.PREFERRED_SIZE, 231, javax.swing.GroupLayout.PREFERRED_SIZE))
-                            .addComponent(AcctypeAP, javax.swing.GroupLayout.PREFERRED_SIZE, 231, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(PinAP, javax.swing.GroupLayout.PREFERRED_SIZE, 231, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(MnumAP, javax.swing.GroupLayout.PREFERRED_SIZE, 231, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(AccnumAP, javax.swing.GroupLayout.PREFERRED_SIZE, 231, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
+                            .addComponent(AccnumAP, javax.swing.GroupLayout.PREFERRED_SIZE, 231, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(invalid_Address))
+                        .addGap(0, 0, Short.MAX_VALUE)))
+                .addGap(85, 85, 85))
             .addGroup(AccountPageLayout.createSequentialGroup()
                 .addGap(372, 372, 372)
                 .addComponent(NewacctxtAP)
@@ -324,11 +353,13 @@ PreparedStatement pst;
                         .addGroup(AccountPageLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(EthnicitytxtAP)
                             .addComponent(EthnicityAP, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addGap(18, 18, Short.MAX_VALUE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addGroup(AccountPageLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(MobiletxtAP)
                             .addComponent(MobileAP, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addGap(16, 16, 16)
+                        .addGap(3, 3, 3)
+                        .addComponent(invalid_phone, javax.swing.GroupLayout.PREFERRED_SIZE, 7, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addGroup(AccountPageLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(SecurityqtxtAP)
                             .addComponent(SecurityqAP, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))))
@@ -338,7 +369,9 @@ PreparedStatement pst;
                     .addComponent(AddressAP, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(AnswertxtAP)
                     .addComponent(AnswerAP, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(18, 18, 18)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(invalid_Address)
+                .addGap(4, 4, 4)
                 .addGroup(AccountPageLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(AmounttxtAP)
                     .addComponent(AmountxtAP, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
@@ -347,7 +380,7 @@ PreparedStatement pst;
                     .addComponent(Back)
                     .addComponent(Create)
                     .addComponent(ClearAP))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap(80, Short.MAX_VALUE))
         );
 
         AccountPageLayout.linkSize(javax.swing.SwingConstants.VERTICAL, new java.awt.Component[] {AccnumAP, AccnumtxtAP, AcctypeAP, AcctypetxtAP, AddressAP, AddresstxtAP, DateofbirthtxtAP, EthnicitytxtAP, Female, FullnametxtAP, GendertxtAP, Male, MnumAP, MnumtxtAP, MobiletxtAP, Other, PinAP, PintxtAP, SecurityqtxtAP});
@@ -426,6 +459,38 @@ PreparedStatement pst;
             JOptionPane.showMessageDialog(null,e);
         }
         }
+    public void validateFeild(JTextField field,JLabel label, String name){
+        if(field.getText().length()!=10){
+            label.setText("Invalid "+ name);
+            Create.setVisible(false);
+        }else {
+            label.setText("");
+            Create.setVisible(true);
+        }
+    } 
+    private static final char[] escapeChars = { '<', '(', '[', '{', '\\', '^', '-', '=', '$', '!', '|', ']', '}', ')', '?', '*', '+', '.', '>' };
+
+    private static Boolean regexEscape(char character) {
+        for (char escapeChar : escapeChars) {
+            if (character == escapeChar) {
+                return true;
+            }
+        }
+        return false;
+    }
+    public void validateAddressFeild(JTextField feild, JLabel label,String name){
+        String var=feild.getText();
+        for(int i=0;i<var.length();i++){
+            if(regexEscape(var.charAt(i))){
+            label.setText(name);
+            Create.setVisible(false);
+        }else {
+            label.setText("");
+            Create.setVisible(true);
+        }         
+       }
+       
+    }
     
     private void PinAPActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_PinAPActionPerformed
         // TODO add your handling code here:
@@ -512,6 +577,18 @@ PreparedStatement pst;
     private void AddressAPActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_AddressAPActionPerformed
         
     }//GEN-LAST:event_AddressAPActionPerformed
+
+    private void CreateKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_CreateKeyReleased
+        // TODO add your handling code here:
+    }//GEN-LAST:event_CreateKeyReleased
+
+    private void MobileAPFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_MobileAPFocusLost
+        validateFeild(MobileAP, invalid_phone, "Phone Number");
+    }//GEN-LAST:event_MobileAPFocusLost
+
+    private void AddressAPFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_AddressAPFocusLost
+        validateAddressFeild(AddressAP,invalid_Address,"please Enter only alphabets");
+    }//GEN-LAST:event_AddressAPFocusLost
     /**
      * @param args the command line arguments
      */
@@ -584,5 +661,7 @@ PreparedStatement pst;
     private javax.swing.JComboBox<String> SecurityqAP;
     private javax.swing.JLabel SecurityqtxtAP;
     private javax.swing.ButtonGroup buttonGroup1;
+    private javax.swing.JLabel invalid_Address;
+    private javax.swing.JLabel invalid_phone;
     // End of variables declaration//GEN-END:variables
 }
